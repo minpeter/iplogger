@@ -3,7 +3,8 @@ version: "3"
 services:
   iplogger:
     container_name: ipLogger
-    image: minpeter/ipLogger:latest
+    image: minpeter/iplogger
+    build: .
     restart: always
     labels:
       - traefik.enable=true

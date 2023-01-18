@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  iplogger:
+    container_name: ipLogger
+    image: minpeter/ipLogger:latest
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.iplogger.rule=Host(`ip.minpeter.cf`)
+      - traefik.http.services.iplogger.loadbalancer.server.port=10000
+      - "traefik.http.routers.iplogger.entrypoints=websecure"
+      - "traefik.http.routers.iplogger.tls.certresolver=myresolver"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

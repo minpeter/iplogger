@@ -6,7 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	// Third party packages
 	"github.com/julienschmidt/httprouter"
@@ -37,6 +39,8 @@ func getIP(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprintf(w, "<p>IP: %s</p>", ip)
 	fmt.Fprintf(w, "<p>Port: %s</p>", port)
 	fmt.Fprintf(w, "<p>Forwarded for: %s</p>", forward)
+	fmt.Fprintf(w, "<br>")
+	fmt.Fprintf(w, "<p><a href='/'>back to home</a></p>")
 }
 
 func main() {
@@ -55,29 +59,40 @@ func main() {
 	r.GET("/ip", getIP)
 
 	r.GET("/whoami", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
+		hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Fprintf(w, "Hostname err: %s\n", err)
+		}
+		fmt.Fprintf(w, "Hostname: %s\n", hostname)
 		fmt.Fprintf(w, "RemoteAddr: %s\n", r.RemoteAddr)
-		fmt.Fprintf(w, "X-Forwarded-For: %s\n", r.Header.Get("X-Forwarded-For"))
-		fmt.Fprintf(w, "X-Real-IP: %s\n", r.Header.Get("X-Real-IP"))
 		fmt.Fprintf(w, "URL: %s\n", r.URL)
 		fmt.Fprintf(w, "Host: %s\n", r.Host)
 		fmt.Fprintf(w, "RequestURI: %s\n", r.RequestURI)
 		fmt.Fprintf(w, "Proto: %s\n", r.Proto)
-		fmt.Fprintf(w, "ProtoMajor: %d\n", r.ProtoMajor)
-		fmt.Fprintf(w, "ProtoMinor: %d\n", r.ProtoMinor)
-		fmt.Fprintf(w, "Header: %s\n", r.Header)
-		fmt.Fprintf(w, "Body: %s\n", r.Body)
-		fmt.Fprintf(w, "ContentLength: %d\n", r.ContentLength)
-		fmt.Fprintf(w, "TransferEncoding: %s\n", r.TransferEncoding)
-		fmt.Fprintf(w, "Close: %t\n", r.Close)
+		fmt.Fprintf(w, "Header: ...\n")
+		for k, v := range r.Header {
+			if k == "Cookie" || k == "Sec-Ch-Ua" {
+				fmt.Fprintf(w, "\t%s: ...\n", k)
+				for _, vv := range strings.Split(strings.Trim(v[0], " "), ";") {
+					fmt.Fprintf(w, "\t\t%s\n", vv)
+				}
+			} else {
+				fmt.Fprintf(w, "\t%s: %s \n", k, v)
+			}
+		}
 	})
 
 	// Add a handler on /test
 	r.GET("/test", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		// Simply write some test data for now
 		fmt.Fprint(w, "<p>Welcome!<p>")
+
+		fmt.Fprintf(w, "<br>")
+		fmt.Fprintf(w, "<p><a href='/'>back to home</a></p>")
 	})
 
-	l, err := net.Listen("tcp", "0.0.0.0:"+myport)
+	l, err := net.Listen("tcp", "localhost:"+myport)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -88,7 +103,7 @@ func main() {
 	//if err != nil {
 	//     log.Println(err)
 	//}
-	fmt.Println("http://0.0.0.0:" + myport + "/ip")
+	fmt.Println("http://localhost:" + myport + "/ip")
 
 	// Start the blocking server loop.
 	log.Fatal(http.Serve(l, r))

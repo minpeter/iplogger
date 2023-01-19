@@ -8,7 +8,7 @@ services:
     restart: always
     labels:
       - traefik.enable=true
-      - traefik.http.routers.iplogger.rule=Host(`ip.minpeter.cf`, `iplogger.minpeter.cf`)
+      - traefik.http.routers.iplogger.rule=Host(`ip.minpeter.cf`, `ip.tempfiles.ml`)
       - traefik.http.services.iplogger.loadbalancer.server.port=10000
       - "traefik.http.routers.iplogger.entrypoints=websecure"
       - "traefik.http.routers.iplogger.tls.certresolver=myresolver"

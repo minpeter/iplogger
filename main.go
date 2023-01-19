@@ -92,7 +92,7 @@ func main() {
 		fmt.Fprintf(w, "<p><a href='/'>back to home</a></p>")
 	})
 
-	l, err := net.Listen("tcp", "localhost:"+myport)
+	l, err := net.Listen("tcp", "0.0.0.0:"+myport)
 	if err != nil {
 		log.Fatal(err)
 	}

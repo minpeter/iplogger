@@ -12,7 +12,6 @@ import (
 
 	// Third party packages
 	"github.com/julienschmidt/httprouter"
-	"github.com/netinternet/remoteaddr"
 )
 
 // https://blog.golang.org/context/userip/userip.go
@@ -39,21 +38,6 @@ func getIP(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprintf(w, "<p>IP: %s</p>", ip)
 	fmt.Fprintf(w, "<p>Port: %s</p>", port)
 	fmt.Fprintf(w, "<p>Forwarded for: %s</p>", forward)
-
-	ip, port = remoteaddr.Parse().IP(r)
-	fmt.Fprintf(w, "<h4>remoteaddr.Parse().IP(r)</h4>")
-	fmt.Fprintf(w, "<p>IP: %s</p>", ip)
-	fmt.Fprintf(w, "<p>Port: %s</p>", port)
-
-	ip, port = remoteaddr.Parse().AddForwarders([]string{"172.26.0.0/16"}).IP(r)
-	fmt.Fprintf(w, "<h4>remoteaddr.Parse().AddForwarders([]string{'172.26.0.0/16'}).IP(r)</h4>")
-	fmt.Fprintf(w, "<p>IP: %s</p>", ip)
-	fmt.Fprintf(w, "<p>Port: %s</p>", port)
-
-	ip, port = remoteaddr.Parse().AddHeaders([]string{"Cf-Connecting-Ip"}).IP(r)
-	fmt.Fprintf(w, "<h4>remoteaddr.Parse().AddHeaders([]string{'Cf-Connecting-Ip'}).IP(r)</h4>")
-	fmt.Fprintf(w, "<p>IP: %s</p>", ip)
-	fmt.Fprintf(w, "<p>Port: %s</p>", port)
 
 	fmt.Fprintf(w, "<br>")
 	fmt.Fprintf(w, "<p><a href='/'>back to home</a></p>")
@@ -101,9 +85,21 @@ func main() {
 
 	// Add a handler on /test
 	r.GET("/test", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		// Simply write some test data for now
-		fmt.Fprint(w, "<p>Welcome!<p>")
 
+		forward := r.Header.Get("X-Forwarded-For")
+		var ip string
+		var err error
+		if forward != "" {
+			ip = strings.Split(forward, ",")[0]
+		} else {
+			ip, _, err = net.SplitHostPort(r.RemoteAddr)
+			if err != nil {
+				http.Error(w, "Error parsing remote address ["+r.RemoteAddr+"]", http.StatusInternalServerError)
+				return
+			}
+		}
+		fmt.Fprintf(w, "<p>IP: %s</p>", ip)
+		fmt.Fprintf(w, "The IP above always refers to your IP.")
 		fmt.Fprintf(w, "<br>")
 		fmt.Fprintf(w, "<p><a href='/'>back to home</a></p>")
 	})

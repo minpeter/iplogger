@@ -22,36 +22,14 @@ type Env struct {
 }
 
 func SetEnv() (Env, error) {
-	if os.Getenv("TRUST_MODE") == "1" {
-		if os.Getenv("PROXY_HOP_COUNT") == "" {
-			return Env{}, errors.New("PROXY_HOP_COUNT is not set")
-		}
-		proxyHopCount, err := strconv.Atoi(os.Getenv("PROXY_HOP_COUNT"))
-		if err != nil {
-			return Env{}, err
-		}
-		return Env{
-			IsProxy:       true,
-			TrustMode:     1,
-			ProxyHopCount: proxyHopCount,
-		}, nil
-		// } else if os.Getenv("TRUST_MODE") == "2" {
-		// 	return Env{
-		// 		IsProxy:   true,
-		// 		TrustMode: 1,
-		// 	}, nil
-		// } else if os.Getenv("TRUST_MODE") == "3" {
-		// 	if os.Getenv("TRUST_ADDRESS") == "" {
-		// 		return Env{}, errors.New("TRUST_ADDRESS is not set")
-		// 	}
-		// 	return Env{
-		// 		IsProxy:      true,
-		// 		TrustMode:    3,
-		// 		TrustAddress: strings.Split(os.Getenv("TRUST_ADDRESS"), ","),
-		// 	}, nil
-	} else {
-		return Env{
-			IsProxy: false,
-		}, nil
+	if os.Getenv("PROXY_HOP_COUNT") == "" {
+		return Env{}, errors.New("PROXY_HOP_COUNT is not set")
 	}
+	proxyHopCount, err := strconv.Atoi(os.Getenv("PROXY_HOP_COUNT"))
+	if err != nil {
+		return Env{}, err
+	}
+	return Env{
+		ProxyHopCount: proxyHopCount,
+	}, nil
 }

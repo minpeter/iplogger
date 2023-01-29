@@ -19,8 +19,6 @@ func getIP(r *http.Request) (net.IP, error) {
 
 	forwards := strings.Split(r.Header.Get("X-Forwarded-For"), ",")
 
-	fmt.Println("forwards: ", forwards)
-	fmt.Println("forwards len: ", len(forwards))
 	if forwards[0] == "" {
 		remoteAddr, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil {
@@ -41,7 +39,6 @@ func getIP(r *http.Request) (net.IP, error) {
 	}
 
 	return nil, errors.New("no ip found")
-
 }
 
 func main() {

@@ -6,147 +6,94 @@ import (
 	"strings"
 )
 
-type ipChecker struct {
-	trustLoopback    bool
-	trustLinkLocal   bool
-	trustPrivateNet  bool
-	trustExtraRanges []*net.IPNet
+var TrustOption = struct {
+	TrustLoopback   bool
+	TrustLinkLocal  bool
+	TrustPrivateNet bool
+	TrustCloudflare bool
+	TrustIPRanges   []*net.IPNet
+}{
+	TrustLoopback:   true,
+	TrustLinkLocal:  true,
+	TrustPrivateNet: true,
+	TrustCloudflare: true,
+	TrustIPRanges:   []*net.IPNet{},
 }
 
-// TrustOption is config for which IP address to trust
-type TrustOption func(*ipChecker)
+func isCloudflareRange(ip net.IP) bool {
+	cloudflareIPs := []string{
+		"173.245.48.0/20",
+		"103.21.244.0/22",
+		"103.22.200.0/22",
+		"103.31.4.0/22",
+		"141.101.64.0/18",
+		"108.162.192.0/18",
+		"190.93.240.0/20",
+		"188.114.96.0/20",
+		"197.234.240.0/22",
+		"198.41.128.0/17",
+		"162.158.0.0/15",
+		"104.16.0.0/13",
+		"104.24.0.0/14",
+		"172.64.0.0/13",
+		"131.0.72.0/22",
+		"2400:cb00::/32",
+		"2606:4700::/32",
+		"2803:f800::/32",
+		"2405:b500::/32",
+		"2405:8100::/32",
+		"2a06:98c0::/29",
+		"2c0f:f248::/32",
+	}
 
-// TrustLoopback configures if you trust loopback address (default: true).
-func TrustLoopback(v bool) TrustOption {
-	return func(c *ipChecker) {
-		c.trustLoopback = v
-	}
-}
-
-// TrustLinkLocal configures if you trust link-local address (default: true).
-func TrustLinkLocal(v bool) TrustOption {
-	return func(c *ipChecker) {
-		c.trustLinkLocal = v
-	}
-}
-
-// TrustPrivateNet configures if you trust private network address (default: true).
-func TrustPrivateNet(v bool) TrustOption {
-	return func(c *ipChecker) {
-		c.trustPrivateNet = v
-	}
-}
-
-// TrustIPRange add trustable IP ranges using CIDR notation.
-func TrustIPRange(ipRange *net.IPNet) TrustOption {
-	return func(c *ipChecker) {
-		c.trustExtraRanges = append(c.trustExtraRanges, ipRange)
-	}
-}
-
-func newIPChecker(configs []TrustOption) *ipChecker {
-	checker := &ipChecker{trustLoopback: true, trustLinkLocal: true, trustPrivateNet: true}
-	for _, configure := range configs {
-		configure(checker)
-	}
-	return checker
-}
-
-// Go1.16+ added `ip.IsPrivate()` but until that use this implementation
-func isPrivateIPRange(ip net.IP) bool {
-	if ip4 := ip.To4(); ip4 != nil {
-		return ip4[0] == 10 ||
-			ip4[0] == 172 && ip4[1]&0xf0 == 16 ||
-			ip4[0] == 192 && ip4[1] == 168
-	}
-	return len(ip) == net.IPv6len && ip[0]&0xfe == 0xfc
-}
-
-func (c *ipChecker) trust(ip net.IP) bool {
-	if c.trustLoopback && ip.IsLoopback() {
-		return true
-	}
-	if c.trustLinkLocal && ip.IsLinkLocalUnicast() {
-		return true
-	}
-	if c.trustPrivateNet && isPrivateIPRange(ip) {
-		return true
-	}
-	for _, trustedRange := range c.trustExtraRanges {
-		if trustedRange.Contains(ip) {
-			return true
-		}
+	for _, cloudflareIP := range cloudflareIPs {
+		_, cloudflareRange, _ := net.ParseCIDR(cloudflareIP)
+		return cloudflareRange.Contains(ip)
 	}
 	return false
 }
 
-type IPExtractor func(*http.Request) string
-
-func ExtractIPDirect() IPExtractor {
-	return extractIP
+func trust(ip net.IP) bool {
+	if TrustOption.TrustLoopback && ip.IsLoopback() {
+		return true
+	}
+	if TrustOption.TrustLinkLocal && ip.IsLinkLocalUnicast() {
+		return true
+	}
+	if TrustOption.TrustPrivateNet && ip.IsPrivate() {
+		return true
+	}
+	if TrustOption.TrustCloudflare && isCloudflareRange(ip) {
+		return true
+	}
+	for _, trustedRange := range TrustOption.TrustIPRanges {
+		return trustedRange.Contains(ip)
+	}
+	return false
 }
 
-func extractIP(r *http.Request) string {
-	ra, _, _ := net.SplitHostPort(r.RemoteAddr)
-	return ra
-}
+func IP(r *http.Request) string {
+	directIP, _, _ := net.SplitHostPort(r.RemoteAddr)
+	forwards := r.Header["X-Forwarded-For"]
 
-func ExtractIPFromXFF() IPExtractor {
-	return func(r *http.Request) string {
-		directIP := extractIP(r)
-		forwards := r.Header.Get("X-Forwarded-For")
+	if len(forwards) == 0 {
+		return directIP
+	}
+	ips := append(strings.Split(strings.Join(forwards, ","), ","), directIP)
 
-		if len(forwards) == 0 {
+	for i := len(ips) - 1; i >= 0; i-- {
+		ips[i] = strings.TrimSpace(ips[i])
+		ips[i] = strings.TrimPrefix(ips[i], "[")
+		ips[i] = strings.TrimSuffix(ips[i], "]")
+		ip := net.ParseIP(ips[i])
+		if ip == nil {
+			// Unable to parse IP; cannot trust entire records
 			return directIP
 		}
-
-		return strings.Split(forwards, ",")[0]
-	}
-}
-
-// ExtractIPFromRealIPHeader extracts IP address using x-real-ip header.
-// Use this if you put proxy which uses this header.
-func ExtractIPFromRealIPHeader(options ...TrustOption) IPExtractor {
-	checker := newIPChecker(options)
-	return func(req *http.Request) string {
-		realIP := req.Header.Get("X-Real-Ip")
-		if realIP != "" {
-			realIP = strings.TrimPrefix(realIP, "[")
-			realIP = strings.TrimSuffix(realIP, "]")
-			if ip := net.ParseIP(realIP); ip != nil && checker.trust(ip) {
-				return realIP
-			}
+		if trust(ip) {
+			return ip.String()
 		}
-		return extractIP(req)
 	}
-}
 
-// ExtractIPFromXFFHeader extracts IP address using x-forwarded-for header.
-// Use this if you put proxy which uses this header.
-// This returns nearest untrustable IP. If all IPs are trustable, returns furthest one (i.e.: XFF[0]).
-func ExtractIPFromXFFHeader(options ...TrustOption) IPExtractor {
-	checker := newIPChecker(options)
-	return func(req *http.Request) string {
-		directIP := extractIP(req)
-		xffs := req.Header["X-Forwarded-For"]
-		if len(xffs) == 0 {
-			return directIP
-		}
-		ips := append(strings.Split(strings.Join(xffs, ","), ","), directIP)
-		for i := len(ips) - 1; i >= 0; i-- {
-			ips[i] = strings.TrimSpace(ips[i])
-			ips[i] = strings.TrimPrefix(ips[i], "[")
-			ips[i] = strings.TrimSuffix(ips[i], "]")
-			ip := net.ParseIP(ips[i])
-			if ip == nil {
-				// Unable to parse IP; cannot trust entire records
-				return directIP
-			}
-			if !checker.trust(ip) {
-				return ip.String()
-			}
-		}
-		// All of the IPs are trusted; return first element because it is furthest from server (best effort strategy).
-		return strings.TrimSpace(ips[0])
-	}
+	return strings.TrimSpace(ips[0])
 }

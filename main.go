@@ -10,6 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	ipextractor "ipLogger/pkg/IPExtractor"
+	echo "ipLogger/pkg/echo"
 )
 
 func main() {
@@ -24,37 +25,36 @@ func main() {
 	r := httprouter.New()
 
 	r.GET("/", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		ip := ipextractor.ExtractIPFromXFF()
-		fmt.Fprintf(w, "implemented by myself Get IP is: %s\n", ip(r))
+		fmt.Fprintf(w, "implemented by myself Get IP is: %s\n", ipextractor.IP(r))
 
-		ip = ipextractor.ExtractIPFromXFFHeader(
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(173, 245, 48, 0), Mask: net.CIDRMask(20, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(103, 21, 244, 0), Mask: net.CIDRMask(22, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(103, 22, 200, 0), Mask: net.CIDRMask(22, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(103, 31, 4, 0), Mask: net.CIDRMask(22, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(141, 101, 64, 0), Mask: net.CIDRMask(18, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(108, 162, 192, 0), Mask: net.CIDRMask(18, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(190, 93, 240, 0), Mask: net.CIDRMask(20, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(188, 114, 96, 0), Mask: net.CIDRMask(20, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(197, 234, 240, 0), Mask: net.CIDRMask(22, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(198, 41, 128, 0), Mask: net.CIDRMask(17, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(162, 158, 0, 0), Mask: net.CIDRMask(15, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(104, 16, 0, 0), Mask: net.CIDRMask(13, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(104, 24, 0, 0), Mask: net.CIDRMask(14, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(172, 64, 0, 0), Mask: net.CIDRMask(13, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.IPv4(131, 0, 72, 0), Mask: net.CIDRMask(22, 32)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2400:cb00::"), Mask: net.CIDRMask(32, 128)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2606:4700::"), Mask: net.CIDRMask(32, 128)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2803:f800::"), Mask: net.CIDRMask(32, 128)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2405:b500::"), Mask: net.CIDRMask(32, 128)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2405:8100::"), Mask: net.CIDRMask(32, 128)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2a06:98c0::"), Mask: net.CIDRMask(29, 128)}),
-			ipextractor.TrustIPRange(&net.IPNet{IP: net.ParseIP("2c0f:f248::"), Mask: net.CIDRMask(32, 128)}),
+		e := echo.ExtractIPFromXFFHeader(
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(20, 32), IP: net.ParseIP("173.245.48.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(22, 32), IP: net.ParseIP("103.21.244.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(22, 32), IP: net.ParseIP("103.22.200.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(22, 32), IP: net.ParseIP("103.31.4.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(18, 32), IP: net.ParseIP("141.101.64.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(18, 32), IP: net.ParseIP("108.162.192.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(20, 32), IP: net.ParseIP("190.93.240.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(20, 32), IP: net.ParseIP("188.114.96.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(22, 32), IP: net.ParseIP("197.234.240.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(17, 32), IP: net.ParseIP("198.41.128.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(15, 32), IP: net.ParseIP("162.158.0.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(13, 32), IP: net.ParseIP("104.16.0.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(14, 32), IP: net.ParseIP("104.24.0.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(13, 32), IP: net.ParseIP("172.64.0.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(22, 32), IP: net.ParseIP("131.0.72.0")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(32, 128), IP: net.ParseIP("2400:cb00::")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(32, 128), IP: net.ParseIP("2606:4700::")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(32, 128), IP: net.ParseIP("2803:f800::")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(32, 128), IP: net.ParseIP("2405:b500::")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(32, 128), IP: net.ParseIP("2405:8100::")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(29, 128), IP: net.ParseIP("2a06:98c0::")}),
+			echo.TrustIPRange(&net.IPNet{Mask: net.CIDRMask(32, 128), IP: net.ParseIP("2c0f:f248::")}),
 		)
-		fmt.Fprintf(w, "implemented by echo framework Get IP is: %s\n", ip(r))
+		fmt.Fprintf(w, "implemented by echo framework Get IP is: %s\n", e(r))
 
-		dip := ipextractor.ExtractIPDirect()
-		fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", dip(r))
+		ra, _, _ := net.SplitHostPort(r.RemoteAddr)
+		fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", ra)
 		fmt.Fprintf(w, "XFF: %s", r.Header.Get("X-Forwarded-For"))
 
 	})

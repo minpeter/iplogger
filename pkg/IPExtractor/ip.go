@@ -48,7 +48,9 @@ func isCloudflareRange(ip net.IP) bool {
 
 	for _, cloudflareIP := range cloudflareIPs {
 		_, cloudflareRange, _ := net.ParseCIDR(cloudflareIP)
-		return cloudflareRange.Contains(ip)
+		if cloudflareRange.Contains(ip) {
+			return true
+		}
 	}
 	return false
 }
@@ -67,7 +69,9 @@ func trust(ip net.IP) bool {
 		return true
 	}
 	for _, trustedRange := range TrustOption.TrustIPRanges {
-		return trustedRange.Contains(ip)
+		if trustedRange.Contains(ip) {
+			return true
+		}
 	}
 	return false
 }
@@ -90,7 +94,7 @@ func IP(r *http.Request) string {
 			// Unable to parse IP; cannot trust entire records
 			return directIP
 		}
-		if trust(ip) {
+		if !trust(ip) {
 			return ip.String()
 		}
 	}

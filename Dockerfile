@@ -1,11 +1,11 @@
 # Step 1: Modules caching
-FROM golang:1.19.4-alpine as modules
+FROM golang:latest as modules
 COPY go.mod go.sum /modules/
 WORKDIR /modules
 RUN go mod download
 
 # Step 2: Builder
-FROM golang:1.19.4-alpine AS builder
+FROM golang:latest AS builder
 COPY --from=modules /go/pkg /go/pkg
 COPY . /app
 ENV CGO_ENABLED=0

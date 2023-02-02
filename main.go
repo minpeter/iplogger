@@ -1,68 +1,39 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"ipLogger/utils"
 	"log"
 	"net"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
+
+	ipextractor "ipLogger/pkg/IPExtractor"
 )
 
-var env utils.Env
-
-func getIP(r *http.Request) (net.IP, error) {
-
-	forwards := strings.Split(r.Header.Get("X-Forwarded-For"), ",")
-
-	if forwards[0] == "" {
-		remoteAddr, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			return nil, err
-		}
-		return net.ParseIP(remoteAddr), nil
-	}
-	if env.TrustMode == 1 {
-		for i := 0; i < env.ProxyHopCount; i++ {
-			if i >= len(forwards) {
-				break
-			}
-			ip := net.ParseIP(forwards[i])
-			if ip != nil {
-				return ip, nil
-			}
-		}
-	}
-
-	return nil, errors.New("no ip found")
-}
-
 func main() {
+
 	var err error
-	env, err = utils.SetEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("is proxy: %t\n", env.IsProxy)
-	fmt.Printf("trust mode: %d\n", env.TrustMode)
-	fmt.Printf("proxy hop count: %d\n", env.ProxyHopCount)
-	fmt.Printf("trust address: %s\n\n", env.TrustAddress)
 
 	myport := strconv.Itoa(10000)
 
 	r := httprouter.New()
 
 	r.GET("/", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		ip, err := getIP(r)
-		if err != nil {
-			fmt.Fprintf(w, "Error: %s\n", err)
-		}
-		fmt.Fprintf(w, "Your IP is: %s\n", ip)
+		ip := ipextractor.ExtractIPFromXFF()
+		fmt.Fprintf(w, "implemented by myself Get IP is: %s\n", ip(r))
+
+		ip = ipextractor.ExtractIPFromXFFHeader()
+		fmt.Fprintf(w, "implemented by echo framework Get IP is: %s\n", ip(r))
+
+		dip := ipextractor.ExtractIPDirect()
+		fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", dip(r))
+		fmt.Fprintf(w, "XFF: %s", r.Header.Get("X-Forwarded-For"))
+
 	})
 
 	l, err := net.Listen("tcp", "0.0.0.0:"+myport)

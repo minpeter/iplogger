@@ -1,4 +1,4 @@
-package ipextractor
+package ip
 
 import (
 	"net"
@@ -76,7 +76,7 @@ func trust(ip net.IP) bool {
 	return false
 }
 
-func IP(r *http.Request) string {
+func GetIP(r *http.Request) string {
 	directIP, _, _ := net.SplitHostPort(r.RemoteAddr)
 	forwards := r.Header["X-Forwarded-For"]
 

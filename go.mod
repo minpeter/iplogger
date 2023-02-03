@@ -1,4 +1,4 @@
-module ipLogger
+module github.com/minpeter/iplogger
 
 go 1.19
 

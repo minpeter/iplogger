@@ -10,8 +10,7 @@ import (
 	"strconv"
 
 	"github.com/julienschmidt/httprouter"
-
-	ipextractor "ipLogger/pkg/IPExtractor"
+	"github.com/minpeter/iplogger/pkg/ip"
 )
 
 func main() {
@@ -24,7 +23,7 @@ func main() {
 	r := httprouter.New()
 
 	r.GET("/", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		clientIP := ipextractor.IP(r)
+		clientIP := ip.GetIP(r)
 		fmt.Fprintf(w, "Your IP is: %s\n", clientIP)
 		ra, _, _ := net.SplitHostPort(r.RemoteAddr)
 		fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", ra)

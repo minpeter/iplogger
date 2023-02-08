@@ -6,15 +6,21 @@ services:
     image: minpeter/iplogger
     build: .
     restart: always
+    volumes:
+      - iplogger-log:/access.log
     labels:
       - traefik.enable=true
       - traefik.http.routers.iplogger.rule=Host(`ip.minpeter.cf`, `ip.tempfiles.ml`)
       - traefik.http.services.iplogger.loadbalancer.server.port=10000
-      - "traefik.http.routers.iplogger.entrypoints=websecure"
-      - "traefik.http.routers.iplogger.tls.certresolver=myresolver"
+      - traefik.http.routers.iplogger.entrypoints=websecure
+      - traefik.http.routers.iplogger.tls.certresolver=myresolver
     networks:
       - traefik
 
 networks:
   traefik:
     external: true
+
+volumes:
+  iplogger-log:
+    driver: local

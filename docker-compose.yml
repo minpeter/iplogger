@@ -7,7 +7,7 @@ services:
     build: .
     restart: always
     volumes:
-      - iplogger-log:/access.log
+      - iplogger-log:/log
     labels:
       - traefik.enable=true
       - traefik.http.routers.iplogger.rule=Host(`ip.minpeter.cf`, `ip.tempfiles.ml`)
@@ -23,4 +23,3 @@ networks:
 
 volumes:
   iplogger-log:
-    driver: local

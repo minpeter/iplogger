@@ -21,7 +21,11 @@ type IpTemplate struct {
 }
 
 func openLogFile() *os.File {
-	f, err := os.OpenFile("access.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// log folder must be created before running the app
+	if _, err := os.Stat("log"); os.IsNotExist(err) {
+		os.Mkdir("log", 0755)
+	}
+	f, err := os.OpenFile("log/access.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}

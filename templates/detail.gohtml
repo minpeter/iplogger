@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>isLogger</title>
+</head>
+
+<body>
+  <h1 class="text">Your IP address</h1>
+  <h2 class="text">{{ .Ip }}</h2>
+
+  <!-- head, cookie, etc, list! -->
+  <ul class="detail">
+    {{range $index, $element := .Detail}}
+    <li id="{{$index}}">{{$element}}</li>
+    {{end}}
+  </ul>
+
+  <a href="/">
+    <button>Back</button>
+  </a>
+</body>
+
+<style>
+  html,
+  body {
+    width: 98%;
+    height: 100%;
+    padding-left: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    background-color: #222222;
+  }
+
+  * {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  li {
+    color: #cccccc;
+    font-size: 1rem;
+    margin: 2px;
+    list-style-type: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    display: block;
+    width: 90%;
+
+    line-height: auto;
+  }
+
+  /* Button tag design with CCCCC color overlay */
+  button {
+    background-color: #444444;
+    font-size: 1rem;
+    color: #cccccc;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 10px 0 0 0;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #cccccc;
+    color: #444444;
+  }
+
+
+  .text {
+    color: #cccccc;
+    line-height: 0.2;
+    font-size: 3rem;
+  }
+
+  @media screen and (max-width: 480px) {
+    .text {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+</html>

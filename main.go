@@ -7,8 +7,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -16,8 +18,13 @@ import (
 	"github.com/minpeter/iplogger/pkg/useragent"
 )
 
-type IpTemplate struct {
+type IndexTemplate struct {
 	Ip string
+}
+
+type DetailTemplate struct {
+	Detail []string
+	Ip     string
 }
 
 func openLogFile() *os.File {
@@ -41,6 +48,62 @@ func loggingMiddleware(next http.Handler) httprouter.Handle {
 	}
 }
 
+func commandLineResponse(w http.ResponseWriter, r *http.Request) {
+	clientIP := ip.GetIP(r)
+	fmt.Fprintf(w, "Your IP is: %s\n", clientIP)
+	ra, _, _ := net.SplitHostPort(r.RemoteAddr)
+	fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", ra)
+	if r.Header.Get("X-Forwarded-For") != "" {
+		fmt.Fprintf(w, "XFF: %s\n", r.Header.Get("X-Forwarded-For"))
+	}
+}
+
+func GetDetail(r *http.Request) []string {
+
+	var result []string
+
+	u, _ := url.Parse(r.URL.String())
+	wait := u.Query().Get("wait")
+	if len(wait) > 0 {
+		duration, err := time.ParseDuration(wait)
+		if err == nil {
+			time.Sleep(duration)
+		}
+	}
+
+	hostname, _ := os.Hostname()
+	result = append(result, "Hostname: "+hostname)
+
+	ifaces, _ := net.Interfaces()
+	for _, i := range ifaces {
+		addrs, _ := i.Addrs()
+		// handle err
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			result = append(result, "IP: "+ip.String())
+		}
+	}
+
+	result = append(result, "RemoteAddr: "+r.RemoteAddr)
+
+	// method + path + HTTP version
+	result = append(result, r.Method+" "+r.URL.Path+" "+r.Proto)
+
+	// headers
+	for name, headers := range r.Header {
+		for _, h := range headers {
+			result = append(result, name+": "+h)
+		}
+	}
+	return result
+}
+
 func main() {
 	logFile := openLogFile()
 	defer logFile.Close()
@@ -51,26 +114,32 @@ func main() {
 	r := httprouter.New()
 
 	r.GET("/", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		clientIP := ip.GetIP(r)
 
 		if useragent.IsCommandLine(r.UserAgent()) {
-			fmt.Fprintf(w, "Your IP is: %s\n", clientIP)
-			ra, _, _ := net.SplitHostPort(r.RemoteAddr)
-			fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", ra)
-			if r.Header.Get("X-Forwarded-For") != "" {
-				fmt.Fprintf(w, "XFF: %s\n", r.Header.Get("X-Forwarded-For"))
-			}
+			commandLineResponse(w, r)
 			return
 		}
-
-		t := IpTemplate{Ip: clientIP}
+		clientIP := ip.GetIP(r)
+		t := IndexTemplate{Ip: clientIP}
 
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
 
-		//return clientIP to html
-		tmpl := template.Must(template.ParseFiles("templates/index.html"))
+		tmpl := template.Must(template.ParseFiles("templates/index.gohtml"))
 		tmpl.Execute(w, t)
+	})))
+
+	r.GET("/detail", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		clientIP := ip.GetIP(r)
+		details := GetDetail(r)
+		t := DetailTemplate{Ip: clientIP, Detail: details}
+
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusOK)
+
+		tmpl := template.Must(template.ParseFiles("templates/detail.gohtml"))
+		tmpl.Execute(w, t)
+
 	})))
 
 	l, err := net.Listen("tcp", "0.0.0.0:"+myport)

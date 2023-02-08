@@ -27,8 +27,20 @@
 
   .text {
     color: #cccccc;
-    font: 4rem "Comic Sans MS", sans-serif;
     line-height: 0.2;
+    font: 4rem "Comic Sans MS", sans-serif;
+  }
+
+  @media screen and (max-width: 480px) {
+    .text {
+      font-size: 2rem;
+    }
+  }
+
+  @media screen and (max-width: 240px) {
+    .text {
+      font-size: 1rem;
+    }
   }
 </style>
 

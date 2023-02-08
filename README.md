@@ -9,6 +9,31 @@ A study on how services located behind multiple reverse proxies log real client 
 
 여러 리버스 프록시 뒤에 위치한 서비스가 실제 클라이언트 IP를 기록하는 방법에 대한 연구
 
+## screenshot
+
+[![image](https://user-images.githubusercontent.com/62207008/217578966-c1daa0b2-5040-4906-abe8-aa7a2f276956.png)](https://ip.minpeter.cf)
+
+## how to use?
+
+```sh
+$ curl ip.minpeter.cf -L
+```
+or <https://ip.minpeter.cf>
+
+## deployment
+
+with docker
+```
+$ docker build -t iplogger .
+$ docker run -dp 10000:10000 iplogger
+```
+
+with golang
+```
+$ go mod tidy
+$ go run .
+```
+
 ## result
 
 ```go

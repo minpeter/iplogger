@@ -52,10 +52,9 @@ func loggingMiddleware(next http.Handler) httprouter.Handle {
 func commandLineResponse(w http.ResponseWriter, r *http.Request) {
 	clientIP := ip.GetIP(r)
 	fmt.Fprintf(w, "Your IP is: %s\n", clientIP)
-	ra, _, _ := net.SplitHostPort(r.RemoteAddr)
-	fmt.Fprintf(w, "\n\ndirectly get IP is: %s\n", ra)
-	if r.Header.Get("X-Forwarded-For") != "" {
-		fmt.Fprintf(w, "XFF: %s\n", r.Header.Get("X-Forwarded-For"))
+	details := GetDetail(r)
+	for _, detail := range details {
+		fmt.Fprintf(w, "%s\n", detail)
 	}
 }
 

@@ -15,5 +15,6 @@ RUN go build -o /bin/app .
 # GOPATH for scratch images is /
 FROM scratch
 COPY --from=builder /bin/app /app
+COPY ./templates /templates
 EXPOSE 10000
 CMD ["/app"]

@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>isLogger</title>
-  </head>
 
-  <body>
-    <h1 class="text">Your IP address</h1>
-    <h2 class="text">{{ .Ip }}</h2>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>isLogger</title>
+</head>
 
-  <style>
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      background-color: #222222;
-    }
+<body>
+  <h1 class="text">Your IP address</h1>
+  <h2 class="text">{{ .Ip }}</h2>
+</body>
 
-    .text {
-      color: #cccccc;
-    }
-  </style>
+<style>
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #222222;
+  }
+
+  .text {
+    color: #cccccc;
+    font: 4rem "Comic Sans MS", sans-serif;
+    line-height: 0.2;
+  }
+</style>
+
 </html>

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 
@@ -95,12 +96,17 @@ func GetDetail(r *http.Request) []string {
 	// method + path + HTTP version
 	result = append(result, r.Method+" "+r.URL.Path+" "+r.Proto)
 
+	headerStartIdx := len(result)
+
 	// headers
 	for name, headers := range r.Header {
 		for _, h := range headers {
 			result = append(result, name+": "+h)
 		}
 	}
+
+	sort.Strings(result[headerStartIdx:])
+
 	return result
 }
 

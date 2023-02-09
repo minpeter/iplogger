@@ -1,7 +1,7 @@
 # ipLogger
 [![Go Report Card](https://goreportcard.com/badge/github.com/minpeter/iplogger)](https://goreportcard.com/report/github.com/minpeter/iplogger)
 [![Go Reference](https://pkg.go.dev/badge/github.com/minpeter/iplogger.svg)](https://pkg.go.dev/github.com/minpeter/iplogger)  
-👀 traefik reverse proxy real ip test
+👀 Project What is my IP?
 
 ## purpose
 

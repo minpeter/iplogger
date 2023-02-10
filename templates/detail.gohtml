@@ -22,6 +22,10 @@
   <button onclick="window.location.href = '/';">back</button>
 </body>
 
+<footer>
+  <a href="https://github.com/minpeter/ipLogger">github.com/minpeter/ipLogger</a>
+</footer>
+
 <style>
   html,
   body {
@@ -85,6 +89,37 @@
   @media screen and (max-width: 480px) {
     .text {
       font-size: 1rem;
+    }
+  }
+
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #cccccc;
+
+  }
+
+  footer a {
+    color: #cccccc;
+    text-decoration: none;
+  }
+
+  footer a:hover {
+    color: #444444;
+  }
+
+  @media screen and (max-height: 360px) {
+    footer a {
+      /* 숨기기 */
+      display: none;
     }
   }
 </style>

@@ -18,6 +18,13 @@
   </div>
 </body>
 
+<!-- footer  -->
+<!-- github repo link -->
+
+<footer>
+  <a href="https://github.com/minpeter/ipLogger">github.com/minpeter/ipLogger</a>
+</footer>
+
 <style>
   html,
   body {
@@ -52,7 +59,6 @@
     color: #444444;
   }
 
-  /* toast class 스타일링 */
   .toast {
     position: absolute;
     top: 0;
@@ -83,6 +89,35 @@
   @media screen and (max-width: 240px) {
     .text {
       font-size: 1rem;
+    }
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #cccccc;
+
+  }
+
+  footer a {
+    color: #cccccc;
+    text-decoration: none;
+  }
+
+  footer a:hover {
+    color: #444444;
+  }
+
+  @media screen and (max-height: 360px) {
+    footer a {
+      display: none;
     }
   }
 </style>

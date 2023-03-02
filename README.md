@@ -34,6 +34,8 @@ $ go mod tidy
 $ go run .
 ```
 
+now running on <http://localhost:10000>
+
 ## result
 
 ```go

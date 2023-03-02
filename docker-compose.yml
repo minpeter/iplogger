@@ -5,6 +5,7 @@ services:
     container_name: ipLogger
     image: minpeter/iplogger
     build: .
+    ports: ["10000:10000"]
     restart: always
     volumes:
       - iplogger-log:/log

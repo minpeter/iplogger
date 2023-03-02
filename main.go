@@ -111,7 +111,9 @@ func GetDetail(r *http.Request) []string {
 
 func main() {
 	logFile := openLogFile()
+
 	defer logFile.Close()
+
 	log.SetOutput(io.MultiWriter(logFile, os.Stdout))
 
 	myport := strconv.Itoa(10000)
@@ -131,7 +133,10 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 
 		tmpl := template.Must(template.ParseFiles("templates/index.gohtml"))
-		tmpl.Execute(w, t)
+		if err := tmpl.Execute(w, t); err != nil {
+			log.Println("Error executing template")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})))
 
 	r.GET("/detail", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -143,8 +148,10 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 
 		tmpl := template.Must(template.ParseFiles("templates/detail.gohtml"))
-		tmpl.Execute(w, t)
-
+		if err := tmpl.Execute(w, t); err != nil {
+			log.Println("Error executing template")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})))
 
 	l, err := net.Listen("tcp", "0.0.0.0:"+myport)

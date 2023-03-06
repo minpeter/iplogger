@@ -51,10 +51,10 @@ func loggingMiddleware(next http.Handler) httprouter.Handle {
 
 func commandLineResponse(w http.ResponseWriter, r *http.Request) {
 	clientIP := ip.GetIP(r)
-	fmt.Fprintf(w, "Your IP is: %s\n", clientIP)
+	_, _ = fmt.Fprintf(w, "Your IP is: %s\n", clientIP)
 	details := GetDetail(r)
 	for _, detail := range details {
-		fmt.Fprintf(w, "%s\n", detail)
+		_, _ = fmt.Fprintf(w, "%s\n", detail)
 	}
 }
 
@@ -79,14 +79,14 @@ func GetDetail(r *http.Request) []string {
 		addrs, _ := i.Addrs()
 		// handle err
 		for _, addr := range addrs {
-			var ip net.IP
+			var n net.IP
 			switch v := addr.(type) {
 			case *net.IPNet:
-				ip = v.IP
+				n = v.IP
 			case *net.IPAddr:
-				ip = v.IP
+				n = v.IP
 			}
-			result = append(result, "IP: "+ip.String())
+			result = append(result, "IP: "+n.String())
 		}
 	}
 

@@ -59,7 +59,7 @@ As a de facto standard, when passing through a proxy, it is added one by one to 
 Therefore, if the corresponding header exists, `X-Forwarded-For` 0th IP is regarded as the client ip, and if not, RemoteAddr is used as the client ip.
 
 사실상 표준 규격으로 프록시를 지날때 `X-Forwarded-For` 해더에 하나씩 추가되게 된다.  
-따라서 해당 해더가 존재하는 경우 `X-Forwarded-For` 0번쨰 아이피를 client ip로 간주하고 없는 경우 RemoteAddr를 client ip로 사용한다.  
+따라서 해당 해더가 존재하는 경우 `X-Forwarded-For` 0번째 아이피를 client ip로 간주하고 없는 경우 RemoteAddr를 client ip로 사용한다.  
 
 ## but!!
 

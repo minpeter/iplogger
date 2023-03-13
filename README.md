@@ -2,7 +2,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/minpeter/iplogger)](https://goreportcard.com/report/github.com/minpeter/iplogger)
 [![Go Reference](https://pkg.go.dev/badge/github.com/minpeter/iplogger.svg)](https://pkg.go.dev/github.com/minpeter/iplogger)
-![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/minpeter/iplogger)  
+[![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/minpeter/iplogger)](https://hub.docker.com/r/minpeter/iplogger)
+[![Docker Pulls](https://img.shields.io/docker/pulls/minpeter/iplogger)](https://hub.docker.com/r/minpeter/iplogger)  
 👀 Project What is my IP?
 
 ## purpose

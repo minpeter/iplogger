@@ -29,21 +29,19 @@ func IsCommandLine(ua string) bool {
 func parse(ua string) *userAgent {
 	// User Agent Structure:
 	uas := &userAgent{}
-	if ua == "" {
-		uas.CommandLine = true
-		return uas
-	}
 	uaArray := strings.Split(ua, " ")
 
-	// Product parsing
-	product := strings.Split(uaArray[0], "/")
+	if strings.Contains(uaArray[0], "/") {
+		product := strings.Split(uaArray[0], "/")
 
-	uas.Product = product[0]
-	uas.Version = product[1]
+		uas.Product = product[0]
+		uas.Version = product[1]
+		uas.Comment = strings.Join(uaArray[1:], " ")
+	} else {
+		uas.Product = "Unknown"
+		uas.Comment = ua
+	}
 
-	uas.Comment = strings.Join(uaArray[1:], " ")
-
-	// User Type parsing
 	uas.typeParse()
 	return uas
 }

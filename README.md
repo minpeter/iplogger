@@ -4,7 +4,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/minpeter/iplogger.svg)](https://pkg.go.dev/github.com/minpeter/iplogger)
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/minpeter/iplogger)](https://hub.docker.com/r/minpeter/iplogger)
 [![Docker Pulls](https://img.shields.io/docker/pulls/minpeter/iplogger)](https://hub.docker.com/r/minpeter/iplogger)  
-👀 Project What is my IP?
+👀 Project: What is my IP?
 
 ## purpose
 
@@ -44,6 +44,8 @@ now running on <http://localhost:10000>
 
 ## ✨ result post (Korean) ✨
 
-프로젝트에 대한 간단한 [설명 글](docs/result.md)
+프로젝트에 대한 간단한 [설명 글](docs/result.md)  
+A brief [description](docs/result.md) of the project
 
-이 프로젝트를 진행하면서 작성한 [블로그 글](https://minpeter.github.io/uncategorized/%EB%B0%B1%EC%97%94%EB%93%9C%EC%97%90%EC%84%9C-client%EC%9D%98-ip%EB%A5%BC-%EB%A1%9C%EA%B9%85%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
+이 프로젝트를 진행하면서 작성한 [블로그 글](https://minpeter.github.io/uncategorized/%EB%B0%B1%EC%97%94%EB%93%9C%EC%97%90%EC%84%9C-client%EC%9D%98-ip%EB%A5%BC-%EB%A1%9C%EA%B9%85%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)  
+[Blog post](https://minpeter.github.io/uncategorized/%EB%B0%B1%EC%97%94%EB%93%9C%EC%97%90%EC%84%9C-client%EC%9D%98-ip%EB%A5%BC-%EB%A1%9C%EA%B9%85%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95) written while working on this project

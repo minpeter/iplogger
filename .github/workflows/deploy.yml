@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: build & deploy
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  docker_build:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,3 +36,16 @@ jobs:
           platforms: linux/arm64, linux/amd64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/iplogger:latest
+
+  deploy-shs:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      - name: compose up
+        run: |
+          docker compose pull
+          docker compose up -d

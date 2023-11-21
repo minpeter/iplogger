@@ -120,6 +120,10 @@ func main() {
 
 	r := httprouter.New()
 
+	r.OPTIONS("/*path", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	})
+
 	r.GET("/", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if useragent.IsCommandLine(r.UserAgent()) {

@@ -120,10 +120,6 @@ func main() {
 
 	r := httprouter.New()
 
-	r.OPTIONS("/*path", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-	})
-
 	r.GET("/", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if useragent.IsCommandLine(r.UserAgent()) {
@@ -162,6 +158,7 @@ func main() {
 		clientIP := ip.GetIP(r)
 		details := GetDetail(r)
 
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 

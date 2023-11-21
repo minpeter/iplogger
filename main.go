@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
 
 	"github.com/minpeter/iplogger/pkg/ip"
 	"github.com/minpeter/iplogger/pkg/useragent"
@@ -157,8 +158,6 @@ func main() {
 	r.GET("/json", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := ip.GetIP(r)
 		details := GetDetail(r)
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
@@ -182,7 +181,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	handler := cors.Default().Handler(r)
+
 	log.Println("Starting the application... http://localhost:" + myport)
 	// Start the blocking server loop.
-	log.Fatal(http.Serve(l, r))
+	log.Fatal(http.Serve(l, handler))
 }

@@ -154,9 +154,26 @@ func main() {
 		}
 	})))
 
-	r.GET("/ip", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.GET("/json", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := ip.GetIP(r)
-		_, _ = fmt.Fprintf(w, "%s\n", clientIP)
+		details := GetDetail(r)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, "{\n")
+		fmt.Fprintf(w, "  \"ip\": \"%s\",\n", clientIP)
+		fmt.Fprintf(w, "  \"detail\": [\n")
+		for i, detail := range details {
+			fmt.Fprintf(w, "    \"%s\"", detail)
+			if i < len(details)-1 {
+				fmt.Fprintf(w, ",")
+			}
+			fmt.Fprintf(w, "\n")
+		}
+		fmt.Fprintf(w, "  ]\n")
+		fmt.Fprintf(w, "}\n")
+
 	})))
 
 	l, err := net.Listen("tcp", "0.0.0.0:"+myport)

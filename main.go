@@ -154,6 +154,11 @@ func main() {
 		}
 	})))
 
+	r.GET("/ip", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		clientIP := ip.GetIP(r)
+		_, _ = fmt.Fprintf(w, "%s\n", clientIP)
+	})))
+
 	l, err := net.Listen("tcp", "0.0.0.0:"+myport)
 	if err != nil {
 		log.Fatal(err)

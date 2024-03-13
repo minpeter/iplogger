@@ -1,9 +1,8 @@
 name: Build & push docker hub
 
 on:
+  workflow_dispatch:
   push:
-    branches: ["main"]
-  pull_request:
     branches: ["main"]
 
 jobs:
@@ -33,6 +32,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/arm64, linux/amd64, linux/riscv64
+          platforms: linux/arm64, linux/amd64, linux/386
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/iplogger:latest

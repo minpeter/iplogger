@@ -5,7 +5,7 @@ WORKDIR /modules
 RUN go mod download
 
 # Step 2: Builder
-FROM --platform=$BUILDPLATFORM golang:latest AS builder
+FROM golang:latest AS builder
 COPY --from=modules /go/pkg /go/pkg
 COPY . /app
 ARG TARGETPLATFORM

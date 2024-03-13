@@ -1,5 +1,5 @@
 # Step 1: Modules caching
-FROM --platform=$BUILDPLATFORM golang:latest as modules
+FROM golang:latest as modules
 COPY go.mod go.sum /modules/
 WORKDIR /modules
 RUN go mod download

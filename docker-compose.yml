@@ -2,7 +2,7 @@ version: "3"
 
 services:
   iplogger:
-    container_name: ipLogger
+    container_name: iplogger
     image: minpeter/iplogger
     build: .
     ports: ["10000:10000"]

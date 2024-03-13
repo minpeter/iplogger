@@ -8,12 +8,13 @@ RUN go mod download
 FROM --platform=$BUILDPLATFORM golang:latest AS builder
 COPY --from=modules /go/pkg /go/pkg
 COPY . /app
+ARG TARGETPLATFORM
 ENV CGO_ENABLED=0
 WORKDIR /app
 RUN go build -o /bin/app .
 
 # GOPATH for scratch images is /
-FROM --platform=$BUILDPLATFORM scratch
+FROM scratch
 COPY --from=builder /bin/app /app
 COPY ./templates /templates
 EXPOSE 10000

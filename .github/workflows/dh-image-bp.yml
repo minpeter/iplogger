@@ -33,6 +33,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/arm64, linux/amd64
+          platforms: linux/arm64, linux/amd64, linux/riscv64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/iplogger:latest

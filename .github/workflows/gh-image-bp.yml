@@ -18,6 +18,7 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
+          - linux/riscv64
     permissions:
       contents: read
       packages: write

@@ -1,4 +1,4 @@
-name: Build & push docker hub
+name: BUILD and PUSH to GHR
 
 on:
   workflow_dispatch:
@@ -42,3 +42,5 @@ jobs:
           platforms: linux/arm64, linux/amd64
           push: true
           tags: ${{ env.REGISTRY_IMAGE }}:latest, ${{ env.REGISTRY_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

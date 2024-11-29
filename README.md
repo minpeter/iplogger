@@ -19,7 +19,7 @@ A study on how services located behind multiple reverse proxies log real client 
 ## how to use?
 
 ```sh
-$ curl ip.minpeter.xyz -L
+curl ip.minpeter.xyz -L
 ```
 
 or <https://ip.minpeter.xyz>
@@ -28,30 +28,30 @@ or <https://ip.minpeter.xyz>
 
 with docker
 
-```
-$ docker build -t iplogger .
-$ docker run -dp 10000:10000 iplogger
+```sh
+docker build -t iplogger .
+docker run -dp 10000:10000 iplogger
 ```
 
 or pre-built image
 
-```
-$ docker run -dp 10000:10000 ghcr.io/minpeter/iplogger:latest
+```sh
+docker run -dp 10000:10000 ghcr.io/minpeter/iplogger:latest
 ```
 
 with golang
 
-```
-$ go mod tidy
-$ go run .
+```sh
+go mod tidy
+go run .
 ```
 
 now running on <http://localhost:10000>
 
-## ✨ result post (Korean) ✨
+## ✨ result post ✨
+
+A brief [description](docs/result.md) of the project (Korean only)  
+[Blog post](https://minpeter.xyz/blog/how-loggin-real-ip) written while working on this projec (Korean only)
 
 프로젝트에 대한 간단한 [설명 글](docs/result.md)  
-A brief [description](docs/result.md) of the project
-
-이 프로젝트를 진행하면서 작성한 [블로그 글](https://minpeter.github.io/uncategorized/%EB%B0%B1%EC%97%94%EB%93%9C%EC%97%90%EC%84%9C-client%EC%9D%98-ip%EB%A5%BC-%EB%A1%9C%EA%B9%85%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)  
-[Blog post](https://minpeter.github.io/uncategorized/%EB%B0%B1%EC%97%94%EB%93%9C%EC%97%90%EC%84%9C-client%EC%9D%98-ip%EB%A5%BC-%EB%A1%9C%EA%B9%85%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95) written while working on this project
+이 프로젝트를 진행하면서 작성한 [블로그 글](https://minpeter.xyz/blog/how-loggin-real-ip)

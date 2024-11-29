@@ -33,6 +33,12 @@ $ docker build -t iplogger .
 $ docker run -dp 10000:10000 iplogger
 ```
 
+or pre-built image
+
+```
+$ docker run -dp 10000:10000 ghcr.io/minpeter/iplogger:latest
+```
+
 with golang
 
 ```

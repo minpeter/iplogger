@@ -14,15 +14,15 @@ A study on how services located behind multiple reverse proxies log real client 
 
 ## screenshot
 
-[![image](https://user-images.githubusercontent.com/62207008/217578966-c1daa0b2-5040-4906-abe8-aa7a2f276956.png)](https://ip.minpeter.cf)
+[![image](https://user-images.githubusercontent.com/62207008/217578966-c1daa0b2-5040-4906-abe8-aa7a2f276956.png)](https://ip.minpeter.xyz)
 
 ## how to use?
 
 ```sh
-$ curl ip.minpeter.cf -L
+$ curl ip.minpeter.xyz -L
 ```
 
-or <https://ip.minpeter.cf>
+or <https://ip.minpeter.xyz>
 
 ## deployment
 

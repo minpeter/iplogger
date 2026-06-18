@@ -51,7 +51,7 @@ now running on <http://localhost:10000>
 ## ✨ result post ✨
 
 A brief [description](docs/result.md) of the project (Korean only)  
-[Blog post](https://minpeter.uk/blog/how-loggin-real-ip) written while working on this projec (Korean only)
+[Blog post](https://minpeter.uk/blog/how-loggin-real-ip) written while working on this project (Korean only)
 
 프로젝트에 대한 간단한 [설명 글](docs/result.md)  
 이 프로젝트를 진행하면서 작성한 [블로그 글](https://minpeter.uk/blog/how-loggin-real-ip)

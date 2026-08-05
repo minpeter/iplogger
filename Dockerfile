@@ -1,14 +1,14 @@
 # Step 1: Modules caching
-FROM --platform=$BUILDPLATFORM golang:latest as modules
+FROM --platform=$BUILDPLATFORM golang:1.26.5-trixie AS modules
 COPY go.mod go.sum /modules/
 WORKDIR /modules
 RUN go mod download
 
 # Step 2: Builder, with cross compile
-FROM --platform=$BUILDPLATFORM golang:latest AS builder
+FROM --platform=$BUILDPLATFORM golang:1.26.5-trixie AS builder
 COPY --from=modules /go/pkg /go/pkg
 COPY . /app
-ARG TARGETOS TARGETARCH 
+ARG TARGETOS TARGETARCH
 ENV CGO_ENABLED=0
 WORKDIR /app
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /bin/app .

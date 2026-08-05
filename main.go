@@ -7,10 +7,8 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"sort"
-	"strconv"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
@@ -21,12 +19,12 @@ import (
 )
 
 type IndexTemplate struct {
-	Ip string
+	IP string
 }
 
 type DetailTemplate struct {
 	Detail []string
-	Ip     string
+	IP     string
 }
 
 func openLogFile() *os.File {
@@ -60,12 +58,9 @@ func commandLineResponse(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetDetail(r *http.Request) []string {
-
 	var result []string
 
-	u, _ := url.Parse(r.URL.String())
-	wait := u.Query().Get("wait")
-	if len(wait) > 0 {
+	if wait := r.URL.Query().Get("wait"); wait != "" {
 		duration, err := time.ParseDuration(wait)
 		if err == nil {
 			time.Sleep(duration)
@@ -117,7 +112,7 @@ func main() {
 
 	log.SetOutput(io.MultiWriter(logFile, os.Stdout))
 
-	myport := strconv.Itoa(10000)
+	const port = "10000"
 
 	r := httprouter.New()
 
@@ -128,7 +123,7 @@ func main() {
 			return
 		}
 		clientIP := ip.GetIP(r)
-		t := IndexTemplate{Ip: clientIP}
+		t := IndexTemplate{IP: clientIP}
 
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
@@ -143,7 +138,7 @@ func main() {
 	r.GET("/detail", loggingMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		clientIP := ip.GetIP(r)
 		details := GetDetail(r)
-		t := DetailTemplate{Ip: clientIP, Detail: details}
+		t := DetailTemplate{IP: clientIP, Detail: details}
 
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
@@ -160,14 +155,14 @@ func main() {
 		_, _ = fmt.Fprintf(w, "%s\n", clientIP)
 	})))
 
-	l, err := net.Listen("tcp", "0.0.0.0:"+myport)
+	l, err := net.Listen("tcp", "0.0.0.0:"+port)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	handler := cors.Default().Handler(r)
 
-	log.Println("Starting the application... http://localhost:" + myport)
+	log.Println("Starting the application... http://localhost:" + port)
 	// Start the blocking server loop.
 	log.Fatal(http.Serve(l, handler))
 }

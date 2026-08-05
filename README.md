@@ -42,8 +42,14 @@ docker run -dp 10000:10000 ghcr.io/minpeter/iplogger:latest
 with golang
 
 ```sh
-go mod tidy
 go run .
+```
+
+Go 1.26 or newer is required. For live reload during development, run the
+project-pinned Air version:
+
+```sh
+go tool air
 ```
 
 now running on <http://localhost:10000>
